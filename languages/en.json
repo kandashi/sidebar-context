@@ -1,3 +1,4 @@
 {
-    "MODULE.hello": "hello"
+    "sidebar-context.addImage": "Add Image",
+    "sidebar-context.prototype": "Prototype Token"
 }
