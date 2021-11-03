@@ -1,7 +1,7 @@
 {
   "name": "sidebar-context",
   "title": "Sidebar Context",
-  "description": "",
+  "description": "Adds several right click context options to documents",
   "version": "This is auto replaced",
   "library": "false",
   "manifestPlusVersion": "1.0.0",
@@ -15,7 +15,7 @@
     }
   ],
   "esmodules": [
-    "/scripts/module.js"
+    "/scripts/sidebarContext.js"
   ],
   "languages": [
     {

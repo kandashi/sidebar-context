@@ -10,7 +10,10 @@
 Adds a few right click options for various documents:
 
 ### Roll Tables
+
 - Adds a "Roll" button
 
 ### Actors
+
 - Adds a "Prototype Token" button
+- Adds an "Update Child Tokens" button, updates all tokens from the parent actor to the current Prototype Token data
