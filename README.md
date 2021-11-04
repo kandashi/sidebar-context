@@ -17,3 +17,7 @@ Adds a few right click options for various documents:
 
 - Adds a "Prototype Token" button
 - Adds an "Update Child Tokens" button, updates all tokens from the parent actor to the current Prototype Token data
+
+### Items
+
+- Adds a "Display to chat" button, which sends a chat message in the same way rolling the item from the actor
