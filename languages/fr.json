@@ -1,0 +1,8 @@
+{
+    "sidebar-context.addImage": "Ajouter une image",
+    "sidebar-context.prototype": "Prototype Token",
+    "sidebar-context.displayChat": "Afficher dans le chat",
+    "sidebar-context.updateChildren": "Mettre à jours les tokens sur les scènes",
+    "sidebar-context.updateChildrenTitle": "Mettre à jour les données du token",
+    "sidebar-context.updateChildrenContent": "Cela mettra à jour tous les tokens créés à partir de cet acteur, afin qu'ils correspondent aux nouvelles données du Prototype Token"
+}
