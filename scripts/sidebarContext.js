@@ -115,6 +115,36 @@ ItemDirectory.prototype._getEntryContextOptions = function newItemContext() {
     ].concat(options);
 }
 
+SceneDirectory.prototype._getEntryContextOptions = function newSceneContext() {
+    const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
+    return [
+        {
+            name: 'sidebar-context.resetDoors',
+            icon: '<i class="fas fa-door-closed"></i>',
+            condition: (li) => {
+              return game.user?.isGM
+            },
+            callback: (li) => {
+              const scene = game.scenes?.get(li.data('entityId'));
+              const isCurrentScene = scene.data._id == canvas.scene?.data._id;
+              await resetDoors(isCurrentScene, scene.data._id);
+            }
+        },
+        {
+          name: 'sidebar-context.resetFog',
+          icon: '<i class="fas fa-dungeon"></i>',
+          condition: (li) => {
+            return game.user?.isGM
+          },
+          callback: (li) => {
+            const scene = game.scenes?.get(li.data('entityId'));
+            const isCurrentScene = scene.data._id == canvas.scene?.data._id;
+            await resetFog(isCurrentScene, scene.data._id);
+          }
+        }
+    ].concat(options);
+}
+
 async function newChatCard() {
     const templateData = {
         item: this.data,
@@ -165,5 +195,39 @@ async function updateChildren() {
             }
         }
     }).render(true)
-    
+
+}
+
+async function resetDoors(isCurrentScene, id) {
+  if (isCurrentScene) {
+    await canvas
+      .walls?.doors.filter((item) => item.data.ds == 1)
+      .forEach((item) => item.update({ ds: 0 }, {}));
+  } else {
+    if (id) {
+      await game
+        .scenes?.get(id)
+        ?.data.walls.filter((item) => item.data.door != 0)
+        .forEach((x) => (x.data.ds = 0));
+    }
+  }
+  ui.notifications?.info(`Doors have been shut.`);
+}
+
+async function resetFog(isCurrentScene, id = null) {
+  if (isCurrentScene) {
+    canvas.sight?.resetFog();
+  } else {
+    if (id) {
+      await SocketInterface.dispatch('modifyDocument', {
+        type: 'FogExploration',
+        action: 'delete',
+        data: { scene: id },
+        options: { reset: true },
+        //parentId: "",
+        //parentType: ""
+      });
+      ui.notifications?.info(`Fog of War exploration progress was reset.`);
+    }
+  }
 }
