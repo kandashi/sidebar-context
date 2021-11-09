@@ -24,7 +24,11 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             icon: '<i class="fas fa-image"></i>',
             condition: li => {
                 const actor = game.actors.get(li.data("entityId"));
-                return actor.data.img !== CONST.DEFAULT_TOKEN;
+                if(game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))){
+                  return actor.data.img !== CONST.DEFAULT_TOKEN;
+                }else{
+                  return false;
+                }
             },
             callback: li => {
                 const actor = game.actors.get(li.data("entityId"));
@@ -40,8 +44,12 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             icon: '<i class="fas fa-image"></i>',
             condition: li => {
                 const actor = game.actors.get(li.data("entityId"));
-                if (actor.data.token.randomImg) return false;
-                return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
+                if(game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))){
+                  if (actor.data.token.randomImg) return false;
+                  return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
+                }else{
+                  return false;
+                }
             },
             callback: li => {
                 const actor = game.actors.get(li.data("entityId"));
@@ -56,7 +64,12 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             name: "sidebar-context.prototype",
             icon: '<i class="fas fa-user circle"></i>',
             condition: li => {
-                return true
+                const actor = game.actors.get(li.data("entityId"));
+                if(game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))){
+                  return true;
+                }else{
+                  return false;
+                }
             },
             callback: li => {
                 const actor = game.actors.get(li.data("entityId"));
@@ -71,7 +84,11 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             icon: `<i class="fas fa-user-edit"></i>`,
             condition: li => {
                 const actor = game.actors.get(li.data("entityId"));
-                return !actor.data.token.actorLink
+                if(game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))){
+                  return !actor.data.token.actorLink;
+                }else{
+                  return false;
+                }
             },
             callback: li => {
                 const actor = game.actors.get(li.data("entityId"));
@@ -111,38 +128,65 @@ ItemDirectory.prototype._getEntryContextOptions = function newItemContext() {
                 const item = game.items.get(li.data("entityId"));
                 newChatCard.call(item)
             }
-        },
+        }
     ].concat(options);
 }
 
-SceneDirectory.prototype._getEntryContextOptions = function newSceneContext() {
-    const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-    return [
-        {
-            name: 'sidebar-context.resetDoors',
-            icon: '<i class="fas fa-door-closed"></i>',
-            condition: (li) => {
-              return game.user?.isGM
-            },
-            callback: (li) => {
-              const scene = game.scenes?.get(li.data('entityId'));
-              const isCurrentScene = scene.data._id == canvas.scene?.data._id;
-              await resetDoors(isCurrentScene, scene.data._id);
-            }
-        },
-        {
-          name: 'sidebar-context.resetFog',
-          icon: '<i class="fas fa-dungeon"></i>',
-          condition: (li) => {
-            return game.user?.isGM
-          },
-          callback: (li) => {
-            const scene = game.scenes?.get(li.data('entityId'));
-            const isCurrentScene = scene.data._id == canvas.scene?.data._id;
-            await resetFog(isCurrentScene, scene.data._id);
-          }
-        }
-    ].concat(options);
+SceneDirectory.prototype._getEntryContextOptions = function newSceneEntryContext() {
+  const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
+  return [
+    {
+      name: 'sidebar-context.resetDoors',
+      icon: '<i class="fas fa-door-closed"></i>',
+      condition: (li) => {
+        return game.user?.isGM;
+      },
+      callback: (li) => {
+        const scene = game.scenes?.get(li.data('entityId'));
+        const isCurrentScene = scene.data._id == canvas.scene?.data._id;
+        await resetDoors(isCurrentScene, scene.data._id);
+      }
+    },
+    {
+      name: 'sidebar-context.resetFog',
+      icon: '<i class="fas fa-dungeon"></i>',
+      condition: (li) => {
+        return game.user?.isGM;
+      },
+      callback: (li) => {
+        const scene = game.scenes?.get(li.data('entityId'));
+        const isCurrentScene = scene.data._id == canvas.scene?.data._id;
+        await resetFog(isCurrentScene, scene.data._id);
+      }
+    }
+  ].concat(options);
+}
+
+SceneDirectory.prototype._getFolderContextOptions  = function newSceneFolderContext() {
+  const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
+  return [
+    {
+      name: 'sidebar-context.showNavAll',
+      condition: (header) => {
+        return game.user?.isGM;
+      },
+      callback: (header) => {
+          const folderId = header.parent().data('folderId');
+          setNavigationForAllScenes(folderId, true);
+      }
+    },
+    {
+      name: 'sidebar-context.hideNavAll',
+      icon: '<i class="fas fa-eye-slash"></i>',
+      condition: (header) => {
+        return game.user?.isGM;
+      },
+      callback: (header) => {
+          const folderId = header.parent().data('folderId');
+          setNavigationForAllScenes(folderId, false);
+      }
+    }
+  ].concat(options);
 }
 
 async function newChatCard() {
@@ -230,4 +274,19 @@ async function resetFog(isCurrentScene, id = null) {
       ui.notifications?.info(`Fog of War exploration progress was reset.`);
     }
   }
+}
+
+/**
+ * Shows or hides all scenes in this folder in the navigation bar
+ * @param {string}  folder  the id or name of the folder in which to toggle permissions
+ * @param {boolean} navOn   whether navigation should be on or off for all scenes in the given folder
+ */
+function setNavigationForAllScenes(folder, navOn) {
+  const folderObject = game.folders.get(folder) || game.folders.getName(folder);
+
+  const updates = game.scenes
+      .filter((scene) => scene.data.folder === folderObject.id)
+      .map((scene) => ({ _id: scene.id, navigation: navOn }));
+
+  return Scene.update(updates);
 }

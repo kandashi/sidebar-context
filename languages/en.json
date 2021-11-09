@@ -6,5 +6,7 @@
     "sidebar-context.updateChildrenTitle": "Update all token data",
     "sidebar-context.updateChildrenContent": "This will update all tokens created from this actor, to match the new prototype token data",
     "sidebar-context.resetDoors": "Reset Doors",
-    "sidebar-context.resetFog": "Reset Fog"
+    "sidebar-context.resetFog": "Reset Fog",
+    "sidebar-context.showNavAll": "Show all scenes in navigation bar",
+    "sidebar-context.hideNavAll": "Hide all scenes in navigation bar"
 }
