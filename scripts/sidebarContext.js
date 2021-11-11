@@ -141,7 +141,7 @@ SceneDirectory.prototype._getEntryContextOptions = function newSceneEntryContext
       condition: (li) => {
         return game.user?.isGM;
       },
-      callback: (li) => {
+      callback: async (li) => {
         const scene = game.scenes?.get(li.data('entityId'));
         const isCurrentScene = scene.data._id == canvas.scene?.data._id;
         await resetDoors(isCurrentScene, scene.data._id);
@@ -153,7 +153,7 @@ SceneDirectory.prototype._getEntryContextOptions = function newSceneEntryContext
       condition: (li) => {
         return game.user?.isGM;
       },
-      callback: (li) => {
+      callback: async (li) => {
         const scene = game.scenes?.get(li.data('entityId'));
         const isCurrentScene = scene.data._id == canvas.scene?.data._id;
         await resetFog(isCurrentScene, scene.data._id);
@@ -163,10 +163,11 @@ SceneDirectory.prototype._getEntryContextOptions = function newSceneEntryContext
 }
 
 SceneDirectory.prototype._getFolderContextOptions  = function newSceneFolderContext() {
-  const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
+  const options = SidebarDirectory.prototype._getFolderContextOptions.call(this);
   return [
     {
       name: 'sidebar-context.showNavAll',
+      icon: '<i class="fas fa-eye"></i>',
       condition: (header) => {
         return game.user?.isGM;
       },
