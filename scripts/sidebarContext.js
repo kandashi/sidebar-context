@@ -5,11 +5,11 @@ RollTableDirectory.prototype._getEntryContextOptions = function newTableContext(
             name: "TABLE.Roll",
             icon: `<i class="fas fa-dice-d20"></i>`,
             condition: li => {
-                const table = game.tables.get(li.data("entityId"));
+                const table = game.tables.get(li.data("documentId"));
                 return table.data.img !== CONST.DEFAULT_TOKEN;
             },
             callback: li => {
-                const table = game.tables.get(li.data("entityId"));
+                const table = game.tables.get(li.data("documentId"));
                 table.draw()
             }
         }
@@ -23,11 +23,11 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             name: "SIDEBAR.CharArt",
             icon: '<i class="fas fa-image"></i>',
             condition: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 return actor.data.img !== CONST.DEFAULT_TOKEN;
             },
             callback: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 new ImagePopout(actor.data.img, {
                     title: actor.name,
                     shareable: true,
@@ -39,12 +39,12 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             name: "SIDEBAR.TokenArt",
             icon: '<i class="fas fa-image"></i>',
             condition: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 if (actor.data.token.randomImg) return false;
                 return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
             },
             callback: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 new ImagePopout(actor.data.token.img, {
                     title: actor.name,
                     shareable: true,
@@ -59,8 +59,8 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
                 return true
             },
             callback: li => {
-                const actor = game.actors.get(li.data("entityId"));
-                new CONFIG.Token.sheetClass(actor, {
+                const actor = game.actors.get(li.data("documentId"));
+                new CONFIG.Token.prototypeSheetClass(actor, {
                     left: Math.max(this.position.left - 560 - 10, 10),
                     top: this.position.top
                 }).render(true);
@@ -70,11 +70,11 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             name: "sidebar-context.updateChildren",
             icon: `<i class="fas fa-user-edit"></i>`,
             condition: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 return !actor.data.token.actorLink
             },
             callback: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 updateChildren.call(actor)
             }
         }
@@ -89,11 +89,11 @@ ItemDirectory.prototype._getEntryContextOptions = function newItemContext() {
             name: "ITEM.ViewArt",
             icon: '<i class="fas fa-image"></i>',
             condition: li => {
-                const item = game.items.get(li.data("entityId"));
+                const item = game.items.get(li.data("documentId"));
                 return item.data.img !== CONST.DEFAULT_TOKEN;
             },
             callback: li => {
-                const item = game.items.get(li.data("entityId"));
+                const item = game.items.get(li.data("documentId"));
                 new ImagePopout(item.data.img, {
                     title: item.name,
                     shareable: true,
@@ -108,7 +108,7 @@ ItemDirectory.prototype._getEntryContextOptions = function newItemContext() {
                 return true
             },
             callback: li => {
-                const item = game.items.get(li.data("entityId"));
+                const item = game.items.get(li.data("documentId"));
                 newChatCard.call(item)
             }
         },
