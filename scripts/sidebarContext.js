@@ -5,11 +5,11 @@ RollTableDirectory.prototype._getEntryContextOptions = function newTableContext(
             name: "TABLE.Roll",
             icon: `<i class="fas fa-dice-d20"></i>`,
             condition: li => {
-                const table = game.tables.get(li.data("entityId"));
+                const table = game.tables.get(li.data("documentId"));
                 return table.data.img !== CONST.DEFAULT_TOKEN;
             },
             callback: li => {
-                const table = game.tables.get(li.data("entityId"));
+                const table = game.tables.get(li.data("documentId"));
                 table.draw()
             }
         }
@@ -23,7 +23,7 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             name: "SIDEBAR.CharArt",
             icon: '<i class="fas fa-image"></i>',
             condition: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 if(game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))){
                   return actor.data.img !== CONST.DEFAULT_TOKEN;
                 }else{
@@ -31,7 +31,7 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
                 }
             },
             callback: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 new ImagePopout(actor.data.img, {
                     title: actor.name,
                     shareable: true,
@@ -43,7 +43,7 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             name: "SIDEBAR.TokenArt",
             icon: '<i class="fas fa-image"></i>',
             condition: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 if(game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))){
                   if (actor.data.token.randomImg) return false;
                   return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
@@ -52,7 +52,7 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
                 }
             },
             callback: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 new ImagePopout(actor.data.token.img, {
                     title: actor.name,
                     shareable: true,
@@ -64,7 +64,7 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             name: "sidebar-context.prototype",
             icon: '<i class="fas fa-user circle"></i>',
             condition: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 if(game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))){
                   return true;
                 }else{
@@ -72,8 +72,8 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
                 }
             },
             callback: li => {
-                const actor = game.actors.get(li.data("entityId"));
-                new CONFIG.Token.sheetClass(actor, {
+                const actor = game.actors.get(li.data("documentId"));
+                new CONFIG.Token.prototypeSheetClass(actor, {
                     left: Math.max(this.position.left - 560 - 10, 10),
                     top: this.position.top
                 }).render(true);
@@ -83,7 +83,7 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
             name: "sidebar-context.updateChildren",
             icon: `<i class="fas fa-user-edit"></i>`,
             condition: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 if(game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))){
                   return !actor.data.token.actorLink;
                 }else{
@@ -91,7 +91,7 @@ ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
                 }
             },
             callback: li => {
-                const actor = game.actors.get(li.data("entityId"));
+                const actor = game.actors.get(li.data("documentId"));
                 updateChildren.call(actor)
             }
         }
@@ -106,11 +106,11 @@ ItemDirectory.prototype._getEntryContextOptions = function newItemContext() {
             name: "ITEM.ViewArt",
             icon: '<i class="fas fa-image"></i>',
             condition: li => {
-                const item = game.items.get(li.data("entityId"));
+                const item = game.items.get(li.data("documentId"));
                 return item.data.img !== CONST.DEFAULT_TOKEN;
             },
             callback: li => {
-                const item = game.items.get(li.data("entityId"));
+                const item = game.items.get(li.data("documentId"));
                 new ImagePopout(item.data.img, {
                     title: item.name,
                     shareable: true,
@@ -125,10 +125,10 @@ ItemDirectory.prototype._getEntryContextOptions = function newItemContext() {
                 return true
             },
             callback: li => {
-                const item = game.items.get(li.data("entityId"));
+                const item = game.items.get(li.data("documentId"));
                 newChatCard.call(item)
             }
-        }
+        },
     ].concat(options);
 }
 
@@ -142,7 +142,7 @@ SceneDirectory.prototype._getEntryContextOptions = function newSceneEntryContext
         return game.user?.isGM;
       },
       callback: async (li) => {
-        const scene = game.scenes?.get(li.data('entityId'));
+        const scene = game.scenes?.get(li.data('documentId'));
         const isCurrentScene = scene.data._id == canvas.scene?.data._id;
         await resetDoors(isCurrentScene, scene.data._id);
       }
@@ -154,7 +154,7 @@ SceneDirectory.prototype._getEntryContextOptions = function newSceneEntryContext
         return game.user?.isGM;
       },
       callback: async (li) => {
-        const scene = game.scenes?.get(li.data('entityId'));
+        const scene = game.scenes?.get(li.data('documentId'));
         const isCurrentScene = scene.data._id == canvas.scene?.data._id;
         await resetFog(isCurrentScene, scene.data._id);
       }
