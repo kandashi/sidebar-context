@@ -1,9 +1,7 @@
-libWrapper.register(
-  'sidebar-context',
-  'RollTableDirectory.prototype._getEntryContextOptions',
-  function (wrapped, ...args) {
-    const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-    return [
+Hooks.once('init', async () => {
+
+  Hooks.on('getRollTableDirectoryEntryContext', (html, options) => {
+    options.push(
       {
         name: "TABLE.Roll",
         icon: `<i class="fas fa-dice-d20"></i>`,
@@ -16,58 +14,52 @@ libWrapper.register(
           table.draw()
         }
       }
-    ].concat(options);
-  },
-  'MIXED',
-);
+    );
+  });
 
-libWrapper.register(
-  'sidebar-context',
-  'ActorDirectory.prototype._getEntryContextOptions',
-  function (wrapped, ...args) {
-    const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-    return [
-      {
-        name: "SIDEBAR.CharArt",
-        icon: '<i class="fas fa-image"></i>',
-        condition: li => {
-          const actor = game.actors.get(li.data("documentId"));
-          if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
-            return actor.data.img !== CONST.DEFAULT_TOKEN;
-          } else {
-            return false;
-          }
-        },
-        callback: li => {
-          const actor = game.actors.get(li.data("documentId"));
-          new ImagePopout(actor.data.img, {
-            title: actor.name,
-            shareable: true,
-            uuid: actor.uuid
-          }).render(true);
-        }
-      },
-      {
-        name: "SIDEBAR.TokenArt",
-        icon: '<i class="fas fa-image"></i>',
-        condition: li => {
-          const actor = game.actors.get(li.data("documentId"));
-          if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
-            if (actor.data.token.randomImg) return false;
-            return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
-          } else {
-            return false;
-          }
-        },
-        callback: li => {
-          const actor = game.actors.get(li.data("documentId"));
-          new ImagePopout(actor.data.token.img, {
-            title: actor.name,
-            shareable: true,
-            uuid: actor.uuid
-          }).render(true);
-        }
-      },
+  Hooks.on('getActorDirectoryEntryContext', (html, options) => {
+    options.push(
+      // {
+      //   name: "SIDEBAR.CharArt",
+      //   icon: '<i class="fas fa-image"></i>',
+      //   condition: li => {
+      //     const actor = game.actors.get(li.data("documentId"));
+      //     if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+      //       return actor.data.img !== CONST.DEFAULT_TOKEN;
+      //     } else {
+      //       return false;
+      //     }
+      //   },
+      //   callback: li => {
+      //     const actor = game.actors.get(li.data("documentId"));
+      //     new ImagePopout(actor.data.img, {
+      //       title: actor.name,
+      //       shareable: true,
+      //       uuid: actor.uuid
+      //     }).render(true);
+      //   }
+      // },
+      // {
+      //   name: "SIDEBAR.TokenArt",
+      //   icon: '<i class="fas fa-image"></i>',
+      //   condition: li => {
+      //     const actor = game.actors.get(li.data("documentId"));
+      //     if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+      //       if (actor.data.token.randomImg) return false;
+      //       return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
+      //     } else {
+      //       return false;
+      //     }
+      //   },
+      //   callback: li => {
+      //     const actor = game.actors.get(li.data("documentId"));
+      //     new ImagePopout(actor.data.token.img, {
+      //       title: actor.name,
+      //       shareable: true,
+      //       uuid: actor.uuid
+      //     }).render(true);
+      //   }
+      // },
       {
         name: "sidebar-context.prototype",
         icon: '<i class="fas fa-user circle"></i>',
@@ -103,18 +95,11 @@ libWrapper.register(
           updateChildren.call(actor)
         }
       }
-    ].concat(options);
-  },
-  'MIXED',
-);
+    );
+  });
 
-
-libWrapper.register(
-  'sidebar-context',
-  'ItemDirectory.prototype._getEntryContextOptions',
-  function (wrapped, ...args) {
-    const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-    return [
+  Hooks.on('getItemDirectoryEntryContext', (html, options) => {
+    options.push(
       {
         name: "ITEM.ViewArt",
         icon: '<i class="fas fa-image"></i>',
@@ -141,18 +126,12 @@ libWrapper.register(
           const item = game.items.get(li.data("documentId"));
           newChatCard.call(item)
         }
-      },
-    ].concat(options);
-  },
-  'MIXED',
-);
+      }
+    );
+  });
 
-libWrapper.register(
-  'sidebar-context',
-  'SceneDirectory.prototype._getEntryContextOptions',
-  function (wrapped, ...args) {
-    const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-    return [
+  Hooks.on('getSceneDirectoryEntryContext', (html, options) => {
+    options.push(
       {
         name: 'sidebar-context.resetDoors',
         icon: '<i class="fas fa-door-closed"></i>',
@@ -177,18 +156,11 @@ libWrapper.register(
           await resetFog(isCurrentScene, scene.data._id);
         }
       }
-    ].concat(options);
-  },
-  'MIXED',
-);
+    );
+  });
 
-
-libWrapper.register(
-  'sidebar-context',
-  'SceneDirectory.prototype._getFolderContextOptions',
-  function (wrapped, ...args) {
-    const options = SidebarDirectory.prototype._getFolderContextOptions.call(this);
-    return [
+  Hooks.on('getSceneDirectoryFolderContext', (html,options)=>{
+    options.push(
       {
         name: 'sidebar-context.showNavAll',
         icon: '<i class="fas fa-eye"></i>',
@@ -211,10 +183,9 @@ libWrapper.register(
           setNavigationForAllScenes(folderId, false);
         }
       }
-    ].concat(options);
-  },
-  'MIXED',
-);
+    );
+  });
+});
 
 async function newChatCard() {
   const templateData = {
