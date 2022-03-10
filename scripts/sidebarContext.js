@@ -1,194 +1,191 @@
-RollTableDirectory.prototype._getEntryContextOptions = function newTableContext() {
-  const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-  return [
-    {
-      name: "TABLE.Roll",
-      icon: `<i class="fas fa-dice-d20"></i>`,
-      condition: li => {
-        const table = game.tables.get(li.data("documentId"));
-        return table.data.img !== CONST.DEFAULT_TOKEN;
-      },
-      callback: li => {
-        const table = game.tables.get(li.data("documentId"));
-        table.draw()
-      }
-    }
-  ].concat(options);
-}
+Hooks.once('init', async () => {
 
-ActorDirectory.prototype._getEntryContextOptions = function newActorContext() {
-  const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-  return [
-    {
-      name: "SIDEBAR.CharArt",
-      icon: '<i class="fas fa-image"></i>',
-      condition: li => {
-        const actor = game.actors.get(li.data("documentId"));
-        if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
-          return actor.data.img !== CONST.DEFAULT_TOKEN;
-        } else {
-          return false;
+  Hooks.on('getRollTableDirectoryEntryContext', (html, options) => {
+    options.push(
+      {
+        name: "TABLE.Roll",
+        icon: `<i class="fas fa-dice-d20"></i>`,
+        condition: li => {
+          const table = game.tables.get(li.data("documentId"));
+          return table.data.img !== CONST.DEFAULT_TOKEN;
+        },
+        callback: li => {
+          const table = game.tables.get(li.data("documentId"));
+          table.draw()
+        }
+      }
+    );
+  });
+
+  Hooks.on('getActorDirectoryEntryContext', (html, options) => {
+    options.push(
+      // {
+      //   name: "SIDEBAR.CharArt",
+      //   icon: '<i class="fas fa-image"></i>',
+      //   condition: li => {
+      //     const actor = game.actors.get(li.data("documentId"));
+      //     if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+      //       return actor.data.img !== CONST.DEFAULT_TOKEN;
+      //     } else {
+      //       return false;
+      //     }
+      //   },
+      //   callback: li => {
+      //     const actor = game.actors.get(li.data("documentId"));
+      //     new ImagePopout(actor.data.img, {
+      //       title: actor.name,
+      //       shareable: true,
+      //       uuid: actor.uuid
+      //     }).render(true);
+      //   }
+      // },
+      // {
+      //   name: "SIDEBAR.TokenArt",
+      //   icon: '<i class="fas fa-image"></i>',
+      //   condition: li => {
+      //     const actor = game.actors.get(li.data("documentId"));
+      //     if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+      //       if (actor.data.token.randomImg) return false;
+      //       return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
+      //     } else {
+      //       return false;
+      //     }
+      //   },
+      //   callback: li => {
+      //     const actor = game.actors.get(li.data("documentId"));
+      //     new ImagePopout(actor.data.token.img, {
+      //       title: actor.name,
+      //       shareable: true,
+      //       uuid: actor.uuid
+      //     }).render(true);
+      //   }
+      // },
+      {
+        name: "sidebar-context.prototype",
+        icon: '<i class="fas fa-user circle"></i>',
+        condition: li => {
+          const actor = game.actors.get(li.data("documentId"));
+          if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        callback: li => {
+          const actor = game.actors.get(li.data("documentId"));
+          new CONFIG.Token.prototypeSheetClass(actor, {
+            left: Math.max(this.position.left - 560 - 10, 10),
+            top: this.position.top
+          }).render(true);
         }
       },
-      callback: li => {
-        const actor = game.actors.get(li.data("documentId"));
-        new ImagePopout(actor.data.img, {
-          title: actor.name,
-          shareable: true,
-          uuid: actor.uuid
-        }).render(true);
+      {
+        name: "sidebar-context.updateChildren",
+        icon: `<i class="fas fa-user-edit"></i>`,
+        condition: li => {
+          const actor = game.actors.get(li.data("documentId"));
+          if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+            return !actor.data.token.actorLink;
+          } else {
+            return false;
+          }
+        },
+        callback: li => {
+          const actor = game.actors.get(li.data("documentId"));
+          updateChildren.call(actor)
+        }
       }
-    },
-    {
-      name: "SIDEBAR.TokenArt",
-      icon: '<i class="fas fa-image"></i>',
-      condition: li => {
-        const actor = game.actors.get(li.data("documentId"));
-        if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
-          if (actor.data.token.randomImg) return false;
-          return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
-        } else {
-          return false;
+    );
+  });
+
+  Hooks.on('getItemDirectoryEntryContext', (html, options) => {
+    options.push(
+      {
+        name: "ITEM.ViewArt",
+        icon: '<i class="fas fa-image"></i>',
+        condition: li => {
+          const item = game.items.get(li.data("documentId"));
+          return item.data.img !== CONST.DEFAULT_TOKEN;
+        },
+        callback: li => {
+          const item = game.items.get(li.data("documentId"));
+          new ImagePopout(item.data.img, {
+            title: item.name,
+            shareable: true,
+            uuid: item.uuid
+          }).render(true);
         }
       },
-      callback: li => {
-        const actor = game.actors.get(li.data("documentId"));
-        new ImagePopout(actor.data.token.img, {
-          title: actor.name,
-          shareable: true,
-          uuid: actor.uuid
-        }).render(true);
+      {
+        name: "sidebar-context.displayChat",
+        icon: `<i class="fas fa-dice-d20"></i>`,
+        condition: li => {
+          return true
+        },
+        callback: li => {
+          const item = game.items.get(li.data("documentId"));
+          newChatCard.call(item)
+        }
       }
-    },
-    {
-      name: "sidebar-context.prototype",
-      icon: '<i class="fas fa-user circle"></i>',
-      condition: li => {
-        const actor = game.actors.get(li.data("documentId"));
-        if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
-          return true;
-        } else {
-          return false;
+    );
+  });
+
+  Hooks.on('getSceneDirectoryEntryContext', (html, options) => {
+    options.push(
+      {
+        name: 'sidebar-context.resetDoors',
+        icon: '<i class="fas fa-door-closed"></i>',
+        condition: (li) => {
+          return game.user?.isGM;
+        },
+        callback: async (li) => {
+          const scene = game.scenes?.get(li.data('documentId'));
+          const isCurrentScene = scene.data._id == canvas.scene?.data._id;
+          await resetDoors(isCurrentScene, scene.data._id);
         }
       },
-      callback: li => {
-        const actor = game.actors.get(li.data("documentId"));
-        new CONFIG.Token.prototypeSheetClass(actor, {
-          left: Math.max(this.position.left - 560 - 10, 10),
-          top: this.position.top
-        }).render(true);
+      {
+        name: 'sidebar-context.resetFog',
+        icon: '<i class="fas fa-dungeon"></i>',
+        condition: (li) => {
+          return game.user?.isGM;
+        },
+        callback: async (li) => {
+          const scene = game.scenes?.get(li.data('documentId'));
+          const isCurrentScene = scene.data._id == canvas.scene?.data._id;
+          await resetFog(isCurrentScene, scene.data._id);
+        }
       }
-    },
-    {
-      name: "sidebar-context.updateChildren",
-      icon: `<i class="fas fa-user-edit"></i>`,
-      condition: li => {
-        const actor = game.actors.get(li.data("documentId"));
-        if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
-          return !actor.data.token.actorLink;
-        } else {
-          return false;
+    );
+  });
+
+  Hooks.on('getSceneDirectoryFolderContext', (html,options)=>{
+    options.push(
+      {
+        name: 'sidebar-context.showNavAll',
+        icon: '<i class="fas fa-eye"></i>',
+        condition: (header) => {
+          return game.user?.isGM;
+        },
+        callback: (header) => {
+          const folderId = header.parent().data('folderId');
+          setNavigationForAllScenes(folderId, true);
         }
       },
-      callback: li => {
-        const actor = game.actors.get(li.data("documentId"));
-        updateChildren.call(actor)
+      {
+        name: 'sidebar-context.hideNavAll',
+        icon: '<i class="fas fa-eye-slash"></i>',
+        condition: (header) => {
+          return game.user?.isGM;
+        },
+        callback: (header) => {
+          const folderId = header.parent().data('folderId');
+          setNavigationForAllScenes(folderId, false);
+        }
       }
-    }
-  ].concat(options);
-}
-
-
-ItemDirectory.prototype._getEntryContextOptions = function newItemContext() {
-  const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-  return [
-    {
-      name: "ITEM.ViewArt",
-      icon: '<i class="fas fa-image"></i>',
-      condition: li => {
-        const item = game.items.get(li.data("documentId"));
-        return item.data.img !== CONST.DEFAULT_TOKEN;
-      },
-      callback: li => {
-        const item = game.items.get(li.data("documentId"));
-        new ImagePopout(item.data.img, {
-          title: item.name,
-          shareable: true,
-          uuid: item.uuid
-        }).render(true);
-      }
-    },
-    {
-      name: "sidebar-context.displayChat",
-      icon: `<i class="fas fa-dice-d20"></i>`,
-      condition: li => {
-        return true
-      },
-      callback: li => {
-        const item = game.items.get(li.data("documentId"));
-        newChatCard.call(item)
-      }
-    },
-  ].concat(options);
-}
-
-SceneDirectory.prototype._getEntryContextOptions = function newSceneEntryContext() {
-  const options = SidebarDirectory.prototype._getEntryContextOptions.call(this);
-  return [
-    {
-      name: 'sidebar-context.resetDoors',
-      icon: '<i class="fas fa-door-closed"></i>',
-      condition: (li) => {
-        return game.user?.isGM;
-      },
-      callback: async (li) => {
-        const scene = game.scenes?.get(li.data('documentId'));
-        const isCurrentScene = scene.data._id == canvas.scene?.data._id;
-        await resetDoors(isCurrentScene, scene.data._id);
-      }
-    },
-    {
-      name: 'sidebar-context.resetFog',
-      icon: '<i class="fas fa-dungeon"></i>',
-      condition: (li) => {
-        return game.user?.isGM;
-      },
-      callback: async (li) => {
-        const scene = game.scenes?.get(li.data('documentId'));
-        const isCurrentScene = scene.data._id == canvas.scene?.data._id;
-        await resetFog(isCurrentScene, scene.data._id);
-      }
-    }
-  ].concat(options);
-}
-
-SceneDirectory.prototype._getFolderContextOptions = function newSceneFolderContext() {
-  const options = SidebarDirectory.prototype._getFolderContextOptions.call(this);
-  return [
-    {
-      name: 'sidebar-context.showNavAll',
-      icon: '<i class="fas fa-eye"></i>',
-      condition: (header) => {
-        return game.user?.isGM;
-      },
-      callback: (header) => {
-        const folderId = header.parent().data('folderId');
-        setNavigationForAllScenes(folderId, true);
-      }
-    },
-    {
-      name: 'sidebar-context.hideNavAll',
-      icon: '<i class="fas fa-eye-slash"></i>',
-      condition: (header) => {
-        return game.user?.isGM;
-      },
-      callback: (header) => {
-        const folderId = header.parent().data('folderId');
-        setNavigationForAllScenes(folderId, false);
-      }
-    }
-  ].concat(options);
-}
+    );
+  });
+});
 
 async function newChatCard() {
   const templateData = {

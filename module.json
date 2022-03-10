@@ -4,7 +4,7 @@
   "description": "Adds several right click context options to documents",
   "version": "This is auto replaced",
   "library": "false",
-  "manifestPlusVersion": "1.0.0",
+  "manifestPlusVersion": "1.2.0",
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9.231",
   "authors": [
@@ -26,5 +26,6 @@
   ],
   "url": "This is auto replaced",
   "manifest": "This is auto replaced",
-  "download": "This is auto replaced"
+  "download": "This is auto replaced",
+  "dependencies": []
 }
