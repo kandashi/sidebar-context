@@ -15,6 +15,9 @@ Adds a few right click options for various documents:
 ### Roll Tables
 
 - Adds a "Roll" button
+- Make Roll: Performs the roll in public and displays the results to GM only.
+- Request Named Roll: Displays a chat card with button asking a player to click it to roll on a the table which is named. When they click it, the roll happens just as with the 'Make Roll' option.
+- Request Blind Roll: Displays the same chat card prompt, but without the name of the table.
 
 ### Actors
 
@@ -29,7 +32,7 @@ Adds a few right click options for various documents:
 
 - Adds a menu to the context dropdown for the Scene Directory menus to shut all doors in the selected scene to prepare it for a fresh visit from characters. The Doors that are currently locked remain locked, and are not closed.
 - Adds a menu to the context dropdown for the Scene Directory menus to delete fog in the selected scene to prepare it for a fresh visit from characters. I find it useful after QAing a new map for holes in walls/doors and checking lighting, etc.
-- Add on the folder scene context options the two options for hide all the scene on the naviagtion bar or show all.
+- Add on the folder scene context options the two options for hide all the scene on the navigation bar or show all.
 
 ## Installation
 
@@ -42,3 +45,20 @@ To install this module manually:
 `https://raw.githubusercontent.com/kandashi/sidebar-context/master/module.json`
 4.  Click 'Install' and wait for installation to complete
 5.  Don't forget to enable the module in game using the "Manage Module" button
+
+## Issues
+
+Any issues, bugs, or feature requests are always welcome to be reported directly to the [Issue Tracker](https://github.com/kandashi/sidebar-context/issues ), or using the [Bug Reporter Module](https://foundryvtt.com/packages/bug-reporter/).
+
+## License
+
+- [Rolltable Requester](https://github.com/colinbate/rolltable-requester): [MIT](https://github.com/colinbate/rolltable-requester/blob/main/LICENSE)
+
+
+This package is under an [MIT license](LICENSE) and the [Foundry Virtual Tabletop Limited License Agreement for module development](https://foundryvtt.com/article/license/).
+
+## Credit
+
+Thanks to anyone who helps me with this code! I appreciate the user community's feedback on this project!
+
+- [Rolltable Requester](https://github.com/colinbate/rolltable-requester) ty to [Malekal4699](ttps://github.com/colinbate/)
