@@ -20,9 +20,9 @@ Hooks.once('init', async () => {
         }
       }
     );
-    const requestNamedRoll = 'Request Named Roll';
-    if (!entries.some(e => e.name === requestNamedRoll)) {
-      // Add entries at the top.
+    // const requestNamedRoll = 'Request Named Roll';
+    // if (!options.some(e => e.name === requestNamedRoll)) {
+      // Add options at the top.
       options.unshift(
         {
           name: 'Make Roll',
@@ -42,7 +42,7 @@ Hooks.once('init', async () => {
           callback: (target) => requestRollById(target.data('document-id'), { blind: true }),
         }
       );
-    }
+    // }
   });
 
   Hooks.on('getActorDirectoryEntryContext', (html, options) => {
@@ -101,10 +101,14 @@ Hooks.once('init', async () => {
         },
         callback: li => {
           const actor = game.actors.get(li.data("documentId"));
-          new CONFIG.Token.prototypeSheetClass(actor, {
-            left: Math.max(this.position.left - 560 - 10, 10),
-            top: this.position.top
-          }).render(true);
+          if(this.position){
+            new CONFIG.Token.prototypeSheetClass(actor, {
+              left: Math.max(this.position.left - 560 - 10, 10),
+              top: this.position.top
+            }).render(true);
+          }else{
+            new CONFIG.Token.prototypeSheetClass(actor, {}).render(true);
+          }
         }
       },
       {
@@ -217,7 +221,7 @@ Hooks.once('init', async () => {
 
 
 Hooks.once('ready', async function() {
-  $(document).on('click.rolltable-requester', '.rt-requester', function() {
+  $(document).on('click.sidebar-context-rolltable-requester', '.rt-requester', function() {
     console.log('RR: Handling button click');
     const c = $(this);
     const tid = c.data('tableid');
@@ -359,7 +363,7 @@ async function rolltableRequesterMakeRoll(table) {
   const drawChatData = {
       content: myHtml,
   };
-  await socket.executeAsGM(WHISPER_FN, drawChatData);
+  await sideBarContextSocket.executeAsGM(WHISPER_FN, drawChatData);
 }
 
 async function makeRollById(tid) {

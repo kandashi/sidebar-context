@@ -46,6 +46,10 @@ To install this module manually:
 4.  Click 'Install' and wait for installation to complete
 5.  Don't forget to enable the module in game using the "Manage Module" button
 
+### socketlib
+
+This module uses the [socketlib](https://github.com/manuelVo/foundryvtt-socketlib) library for wrapping core methods. It is a hard dependency and it is recommended for the best experience and compatibility with other modules.
+
 ## Issues
 
 Any issues, bugs, or feature requests are always welcome to be reported directly to the [Issue Tracker](https://github.com/kandashi/sidebar-context/issues ), or using the [Bug Reporter Module](https://foundryvtt.com/packages/bug-reporter/).

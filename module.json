@@ -4,9 +4,7 @@
   "description": "Adds several right click context options to documents",
   "version": "This is auto replaced",
   "library": "false",
-  "manifestPlusVersion": "1.2.0",
-  "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "9.231",
+  "socket":true,
   "authors": [
     {
       "name": "Kandashi",
@@ -16,6 +14,9 @@
   ],
   "esmodules": [
     "/scripts/sidebarContext.js"
+  ],
+  "styles": [
+    "/styles/module.css"
   ],
   "languages": [
     {
@@ -27,5 +28,16 @@
   "url": "This is auto replaced",
   "manifest": "This is auto replaced",
   "download": "This is auto replaced",
-  "dependencies": []
+  "minimumCoreVersion": "9",
+  "compatibleCoreVersion": "9.231",
+  "manifestPlusVersion": "1.2.0",
+  "readme": "https://github.com/kandashi/sidebar-context/blob/master/README.md",
+  "changelog": "https://github.com/kandashi/sidebar-context/blob/master/changelog.md",
+  "bugs": "https://github.com/kandashi/sidebar-context/issues",
+  "allowBugReporter": true,
+  "dependencies": [
+    {
+      "name": "socketlib"
+    }
+  ]
 }
