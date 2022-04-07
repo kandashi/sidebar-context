@@ -19,47 +19,6 @@ Hooks.once('init', async () => {
 
   Hooks.on('getActorDirectoryEntryContext', (html, options) => {
     options.push(
-      // {
-      //   name: "SIDEBAR.CharArt",
-      //   icon: '<i class="fas fa-image"></i>',
-      //   condition: li => {
-      //     const actor = game.actors.get(li.data("documentId"));
-      //     if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
-      //       return actor.data.img !== CONST.DEFAULT_TOKEN;
-      //     } else {
-      //       return false;
-      //     }
-      //   },
-      //   callback: li => {
-      //     const actor = game.actors.get(li.data("documentId"));
-      //     new ImagePopout(actor.data.img, {
-      //       title: actor.name,
-      //       shareable: true,
-      //       uuid: actor.uuid
-      //     }).render(true);
-      //   }
-      // },
-      // {
-      //   name: "SIDEBAR.TokenArt",
-      //   icon: '<i class="fas fa-image"></i>',
-      //   condition: li => {
-      //     const actor = game.actors.get(li.data("documentId"));
-      //     if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
-      //       if (actor.data.token.randomImg) return false;
-      //       return ![null, undefined, CONST.DEFAULT_TOKEN].includes(actor.data.token.img);
-      //     } else {
-      //       return false;
-      //     }
-      //   },
-      //   callback: li => {
-      //     const actor = game.actors.get(li.data("documentId"));
-      //     new ImagePopout(actor.data.token.img, {
-      //       title: actor.name,
-      //       shareable: true,
-      //       uuid: actor.uuid
-      //     }).render(true);
-      //   }
-      // },
       {
         name: "sidebar-context.prototype",
         icon: '<i class="fas fa-user circle"></i>',
@@ -73,10 +32,7 @@ Hooks.once('init', async () => {
         },
         callback: li => {
           const actor = game.actors.get(li.data("documentId"));
-          new CONFIG.Token.prototypeSheetClass(actor, {
-            left: Math.max(this.position.left - 560 - 10, 10),
-            top: this.position.top
-          }).render(true);
+          new CONFIG.Token.prototypeSheetClass(actor).render(true);
         }
       },
       {
