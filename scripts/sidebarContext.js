@@ -27,7 +27,7 @@ Hooks.once('init', async () => {
       // Add options at the top.
       options.unshift(
         {
-          menuId,
+          // menuId,
           name: game.i18n.localize('sidebar-context.menuMakeRoll'),
           icon: '<i class="fas fa-dice-d20"></i>',
           callback: (target) => makeRollById(target.data('document-id')),
