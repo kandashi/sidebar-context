@@ -20,23 +20,26 @@ Hooks.once('init', async () => {
         }
       }
     );
-    // const requestNamedRoll = 'Request Named Roll';
-    // if (!options.some(e => e.name === requestNamedRoll)) {
+      // const menuId = 'rolltable-requester';
+      // if (entries.some(e => e.menuId === menuId)) {
+      //   return;
+      // }
       // Add options at the top.
       options.unshift(
         {
-          name: 'Make Roll',
+          menuId,
+          name: game.i18n.localize('sidebar-context.menuMakeRoll'),
           icon: '<i class="fas fa-dice-d20"></i>',
           callback: (target) => makeRollById(target.data('document-id')),
         },
         {
-          name: 'Request Named Roll',
+          name: game.i18n.localize('sidebar-context.menuRequestRoll'),
           icon: '<i class="fas fa-question-circle"></i>',
           condition: game.user.isGM,
           callback: (target) => requestRollById(target.data('document-id')),
         },
         {
-          name: 'Request Blinded Roll',
+          name: game.i18n.localize('sidebar-context.menuRequestBlindRoll'),
           icon: '<i class="fas fa-eye-slash"></i>',
           condition: game.user.isGM,
           callback: (target) => requestRollById(target.data('document-id'), { blind: true }),
@@ -294,7 +297,7 @@ function setNavigationForAllScenes(folder, navOn) {
 }
 
 async function rolltableRequesterMakeRoll(table) {
-  const { formula } = table.data;
+  const formula = table.formula ?? table.data.formula;
   const pRoll = new Roll(formula);
   const die = await pRoll.roll({ async: true });
   await pRoll.toMessage({}, {
@@ -310,7 +313,7 @@ async function rolltableRequesterMakeRoll(table) {
     thumbnail: table.thumbnail,
     total: die.total,
     user,
-    content: results[0].data.text
+    content: results[0].text ?? results[0].data.text
   });
   const drawChatData = {
       content: myHtml,

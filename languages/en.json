@@ -11,5 +11,8 @@
     "sidebar-context.hideNavAll": "Hide all scenes in navigation bar",
     "sidebar-context.requestPrompt": "Can someone roll a result from this random table?",
     "sidebar-context.requestButton": "Let's Get Random!",
-    "sidebar-context.playerThanks": "Thanks {PLAYER}"
+    "sidebar-context.playerThanks": "Thanks {PLAYER}",  
+    "sidebar-context.menuMakeRoll": "Make Roll",
+    "sidebar-context.menuRequestRoll": "Request Named Roll",
+    "sidebar-context.menuRequestBlindRoll": "Request Blinded Roll"
 }
