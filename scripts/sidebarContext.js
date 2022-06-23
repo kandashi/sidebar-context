@@ -142,7 +142,18 @@ Hooks.once('init', async () => {
           const isCurrentScene = scene.data._id == canvas.scene?.data._id;
           await resetFog(isCurrentScene, scene.data._id);
         }
-      }
+      },
+      {
+        name: "SCENES.Preload",
+        icon: '<i class="fas fa-download"></i>',
+        condition: (li) => {
+          return game.user?.isGM;
+        },
+        callback: li => {
+          const scene = game.scenes?.get(li.data('documentId'));
+          game.scenes.preload(scene.id, true);
+        }
+      },
     );
   });
 
