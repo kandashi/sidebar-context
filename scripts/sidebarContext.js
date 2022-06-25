@@ -206,7 +206,7 @@ async function newChatCard() {
     isTool: this.data.type === "tool",
     hasAbilityCheck: this.hasAbilityCheck
   };
-  const html = await renderTemplate("systems/dnd5e/templates/chat/item-card.html", templateData);
+  const html = await renderTemplate(`modules/${MODULE_NAME}/templates/item-card.html`, templateData);
 
   // Create the ChatMessage data object
   const chatData = {
