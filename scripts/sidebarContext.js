@@ -55,7 +55,7 @@ Hooks.once('init', async () => {
         icon: '<i class="fas fa-user circle"></i>',
         condition: li => {
           const actor = game.actors.get(li.data("documentId"));
-          if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+          if (game.user.isGM || (actor.isOwner && game.user.can("TOKEN_CONFIGURE"))) {
             return true;
           } else {
             return false;
@@ -71,7 +71,7 @@ Hooks.once('init', async () => {
         icon: `<i class="fas fa-user-edit"></i>`,
         condition: li => {
           const actor = game.actors.get(li.data("documentId"));
-          if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+          if (game.user.isGM || (actor.isOwner && game.user.can("TOKEN_CONFIGURE"))) {
             return !actor.data.token.actorLink;
           } else {
             return false;
