@@ -1,3 +1,8 @@
+
+const MODULE_NAME = 'sidebar-context';
+const TEMPLATE_PATH = `/modules/${MODULE_NAME}/templates`;
+const WHISPER_FN = 'cheekyWhisper';
+
 Hooks.once('init', async () => {
 
   Hooks.on('getRollTableDirectoryEntryContext', (html, options) => {
@@ -15,6 +20,32 @@ Hooks.once('init', async () => {
         }
       }
     );
+      // const menuId = 'rolltable-requester';
+      // if (entries.some(e => e.menuId === menuId)) {
+      //   return;
+      // }
+      // Add options at the top.
+      options.unshift(
+        {
+          // menuId,
+          name: game.i18n.localize('sidebar-context.menuMakeRoll'),
+          icon: '<i class="fas fa-dice-d20"></i>',
+          callback: (target) => makeRollById(target.data('document-id')),
+        },
+        {
+          name: game.i18n.localize('sidebar-context.menuRequestRoll'),
+          icon: '<i class="fas fa-question-circle"></i>',
+          condition: game.user.isGM,
+          callback: (target) => requestRollById(target.data('document-id')),
+        },
+        {
+          name: game.i18n.localize('sidebar-context.menuRequestBlindRoll'),
+          icon: '<i class="fas fa-eye-slash"></i>',
+          condition: game.user.isGM,
+          callback: (target) => requestRollById(target.data('document-id'), { blind: true }),
+        }
+      );
+    // }
   });
 
   Hooks.on('getActorDirectoryEntryContext', (html, options) => {
@@ -24,7 +55,7 @@ Hooks.once('init', async () => {
         icon: '<i class="fas fa-user circle"></i>',
         condition: li => {
           const actor = game.actors.get(li.data("documentId"));
-          if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+          if (game.user.isGM || (actor.isOwner && game.user.can("TOKEN_CONFIGURE"))) {
             return true;
           } else {
             return false;
@@ -40,7 +71,7 @@ Hooks.once('init', async () => {
         icon: `<i class="fas fa-user-edit"></i>`,
         condition: li => {
           const actor = game.actors.get(li.data("documentId"));
-          if (game.user.isGM || (actor.owner && game.user.can("TOKEN_CONFIGURE"))) {
+          if (game.user.isGM || (actor.isOwner && game.user.can("TOKEN_CONFIGURE"))) {
             return !actor.data.token.actorLink;
           } else {
             return false;
@@ -154,6 +185,23 @@ Hooks.once('init', async () => {
   });
 });
 
+
+Hooks.once('ready', async function() {
+  $(document).on('click.sidebar-context-rolltable-requester', '.rt-requester', function() {
+    console.log('RR: Handling button click');
+    const c = $(this);
+    const tid = c.data('tableid');
+    makeRollById(tid);
+  });
+});
+
+let sideBarContextSocket;
+
+Hooks.once('socketlib.ready', () => {
+  sideBarContextSocket = socketlib.registerModule(MODULE_NAME);
+  sideBarContextSocket.register(WHISPER_FN, cheekyWhisper);
+});
+
 async function newChatCard() {
   const templateData = {
     item: this.data,
@@ -169,7 +217,7 @@ async function newChatCard() {
     isTool: this.data.type === "tool",
     hasAbilityCheck: this.hasAbilityCheck
   };
-  const html = await renderTemplate("systems/dnd5e/templates/chat/item-card.html", templateData);
+  const html = await renderTemplate(`modules/${MODULE_NAME}/templates/item-card.html`, templateData);
 
   // Create the ChatMessage data object
   const chatData = {
@@ -257,4 +305,73 @@ function setNavigationForAllScenes(folder, navOn) {
     .map((scene) => ({ _id: scene.id, navigation: navOn }));
 
   return Scene.updateDocuments(updates);
+}
+
+async function rolltableRequesterMakeRoll(table) {
+  const formula = table.formula ?? table.data.formula;
+  const pRoll = new Roll(formula);
+  const die = await pRoll.roll({ async: true });
+  await pRoll.toMessage({}, {
+    rollMode: CONFIG.Dice.rollModes.publicroll,
+    create: true,
+  });
+
+  const results = table.getResultsForRoll(die.total);
+  const thanks = game.i18n.localize('sidebar-context.playerThanks');
+  const user = thanks.replace(/\{PLAYER\}/g, game.user.name);
+  const myHtml = await renderTemplate(`${TEMPLATE_PATH}/result-card.html`, {
+    name: table.name,
+    thumbnail: table.thumbnail,
+    total: die.total,
+    user,
+    content: results[0].text ?? results[0].data.text
+  });
+  const drawChatData = {
+      content: myHtml,
+  };
+  await sideBarContextSocket.executeAsGM(WHISPER_FN, drawChatData);
+}
+
+async function makeRollById(tid) {
+  const table = game.tables.get(tid);
+  rolltableRequesterMakeRoll(table);
+}
+
+async function makeRollByName(tableName) {
+  const table = game.tables.getName(tableName);
+  rolltableRequesterMakeRoll(table);
+}
+
+async function requestRollById(tid, { blind } = { blind: false }) {
+  const tmplData = {
+    name: '???',
+    thumbnail: 'icons/svg/d20-grey.svg',
+    tid,
+  };
+  let table;
+  if (!blind) {
+    table = game.tables.get(tid);
+    tmplData.name = table.name;
+    tmplData.thumbnail = table.thumbnail;
+  }
+  const myHtml = await renderTemplate(`${TEMPLATE_PATH}/request-card.html`, tmplData);
+  const chatData = {
+    user: game.user.id,
+    content: myHtml
+  };
+  ChatMessage.create(chatData, {});
+  return table;
+}
+
+async function requestRollByName(tableName, opts = { blind: false }) {
+  const table = game.tables.getName(tableName);
+  return await requestRollById(table.id, opts);
+}
+
+function cheekyWhisper(msg) {
+  const chatMsg = {
+    ...msg,
+    whisper: ChatMessage.getWhisperRecipients('GM'),
+  }
+  ChatMessage.create(chatMsg);
 }
