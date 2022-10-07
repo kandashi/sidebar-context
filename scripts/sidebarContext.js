@@ -32,7 +32,11 @@ Hooks.once('init', async () => {
         },
         callback: li => {
           const actor = game.actors.get(li.data("documentId"));
-          new CONFIG.Token.prototypeSheetClass(actor).render(true);
+          if (game.version >= 10) {
+            new CONFIG.Token.prototypeSheetClass(actor.prototypeToken).render(true);
+          } else {
+            new CONFIG.Token.prototypeSheetClass(actor).render(true);
+          }
         }
       },
       {
