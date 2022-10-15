@@ -1,43 +1,93 @@
 {
-  "name": "sidebar-context",
+  "id": "sidebar-context",
   "title": "Sidebar Context",
   "description": "Adds several right click context options to documents",
   "version": "This is auto replaced",
-  "library": "false",
-  "socket":true,
-  "authors": [
+	"authors": [
     {
       "name": "Kandashi",
       "url": "https://github.com/kandashi",
       "discord": "Kandashi (He/Him)#6698"
-    }
-  ],
+    },
+		{
+			"name": "p4535992",
+			"url": "https://github.com/p4535992",
+			"discord": "",
+			"twitter": "",
+			"patreon": "",
+			"github": "p4535992",
+			"ko-fi": "",
+			"reddit": "",
+			"email": ""
+		}
+	],
+	"type": "module",
+	"socket": true,
+	"includes": [
+		"./assets/**",
+		"./lang/**",
+		"./languages/**",
+		"./scripts/**",
+		"./styles/**",
+		"./templates/**",
+		"./module.json",
+		"./README.md",
+		"./icons/**",
+		"./packs/**"
+	],
+	"media": [
+		{
+			"type": "icon",
+			"location": ""
+		},
+		{
+			"type": "cover",
+			"location": ""
+		},
+		{
+			"type": "screenshot",
+			"location": ""
+		}
+	],
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "languages/en.json"
+		}
+	],
+	"packs": [],
+	"systems": [],
+	"scripts": [],
   "esmodules": [
     "/scripts/sidebarContext.js"
   ],
   "styles": [
     "/styles/module.css"
   ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "languages/en.json"
-    }
-  ],
+	"compatibility": {
+		"minimum": 10,
+		"verified": 10,
+		"maximum": 10
+	},
+	"manifestPlusVersion": "1.2.1",
   "url": "This is auto replaced",
   "manifest": "This is auto replaced",
   "download": "This is auto replaced",
-  "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "9.231",
-  "manifestPlusVersion": "1.2.0",
   "readme": "https://github.com/kandashi/sidebar-context/blob/master/README.md",
   "changelog": "https://github.com/kandashi/sidebar-context/blob/master/changelog.md",
   "bugs": "https://github.com/kandashi/sidebar-context/issues",
   "allowBugReporter": true,
-  "dependencies": [
-    {
-      "name": "socketlib"
-    }
-  ]
+	"relationships": {
+		"systems": [],
+		"requires": [
+			{
+				"id": "socketlib",
+				"type": "module",
+				"manifest": "https://raw.githubusercontent.com/manuelVo/foundryvtt-socketlib/develop/module.json",
+				"compatibility": {}
+			}
+		],
+		"conflicts": []
+	}
 }

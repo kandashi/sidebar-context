@@ -43,6 +43,12 @@ Hooks.once('init', async () => {
           icon: '<i class="fas fa-eye-slash"></i>',
           condition: game.user.isGM,
           callback: (target) => requestRollById(target.data('document-id'), { blind: true }),
+        },
+        {
+          name: game.i18n.localize('sidebar-context.menuRequestDescRoll'),
+          icon: '<i class="fas fa-book-sparkles"></i>',
+          condition: game.user.isGM,
+          callback: (target) => requestRollById(target.data('document-id'), { description: true }),
         }
       );
     // }
@@ -63,7 +69,11 @@ Hooks.once('init', async () => {
         },
         callback: li => {
           const actor = game.actors.get(li.data("documentId"));
-          new CONFIG.Token.prototypeSheetClass(actor).render(true);
+          if (game.version >= 10) {
+            new CONFIG.Token.prototypeSheetClass(actor.prototypeToken).render(true);
+          } else {
+            new CONFIG.Token.prototypeSheetClass(actor).render(true);
+          }
         }
       },
       {
@@ -342,17 +352,28 @@ async function makeRollByName(tableName) {
   rolltableRequesterMakeRoll(table);
 }
 
-async function requestRollById(tid, { blind } = { blind: false }) {
+async function requestRollById(tid, { blind, description } = { blind: false, description: false }) {
   const tmplData = {
     name: '???',
     thumbnail: 'icons/svg/d20-grey.svg',
     tid,
+    system: game.system.id,
   };
   let table;
+  if (!blind || description) { 
+    table = game.tables.get(tid); 
+  }
   if (!blind) {
     table = game.tables.get(tid);
     tmplData.name = table.name;
     tmplData.thumbnail = table.thumbnail;
+  }
+  if (description) {
+    tmplData.description = table.description;
+    if (typeof tmplData.description === 'string' && tmplData.description.length && !tmplData.description.includes('<')) {
+      const paras = tmplData.description.split(/\r?\n\r?\n/).filter(x => !!x.trim()).join('</p><p>');
+      tmplData.description = `<p>${paras}</p>`;
+    }
   }
   const myHtml = await renderTemplate(`${TEMPLATE_PATH}/request-card.html`, tmplData);
   const chatData = {
@@ -363,7 +384,7 @@ async function requestRollById(tid, { blind } = { blind: false }) {
   return table;
 }
 
-async function requestRollByName(tableName, opts = { blind: false }) {
+async function requestRollByName(tableName, opts = { blind: false, description: false }) {
   const table = game.tables.getName(tableName);
   return await requestRollById(table.id, opts);
 }

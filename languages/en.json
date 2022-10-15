@@ -14,5 +14,6 @@
     "sidebar-context.playerThanks": "Thanks {PLAYER}",  
     "sidebar-context.menuMakeRoll": "Make Roll",
     "sidebar-context.menuRequestRoll": "Request Named Roll",
-    "sidebar-context.menuRequestBlindRoll": "Request Blinded Roll"
+    "sidebar-context.menuRequestBlindRoll": "Request Blinded Roll",
+    "sidebar-context.menuRequestDescRoll": "Request Descriptive Roll"
 }
