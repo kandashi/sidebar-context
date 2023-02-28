@@ -18,6 +18,7 @@ Adds a few right click options for various documents:
 - Make Roll: Performs the roll in public and displays the results to GM only.
 - Request Named Roll: Displays a chat card with button asking a player to click it to roll on a the table which is named. When they click it, the roll happens just as with the 'Make Roll' option.
 - Request Blind Roll: Displays the same chat card prompt, but without the name of the table.
+- Request Descriptive Roll: This is like the named roll except that it will also display the rolltable description.
 
 ### Actors
 
