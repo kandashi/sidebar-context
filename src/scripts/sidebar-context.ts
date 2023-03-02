@@ -11,7 +11,7 @@ export const initHooks = async (): Promise<void> => {
 			icon: `<i class="fas fa-dice-d20"></i>`,
 			condition: (li) => {
 				const table = <any>game.tables?.get(li.data("documentId"));
-				return table.data.img !== CONST.DEFAULT_TOKEN;
+				return table.img !== CONST.DEFAULT_TOKEN;
 			},
 			callback: (li) => {
 				const table = <any>game.tables?.get(li.data("documentId"));
@@ -80,7 +80,7 @@ export const initHooks = async (): Promise<void> => {
 				condition: (li) => {
 					const actor = <any>game.actors?.get(li.data("documentId"));
 					if (game.user?.isGM || (actor.isOwner && game.user?.can("TOKEN_CONFIGURE"))) {
-						return !actor.data.token.actorLink;
+						return !actor.token.actorLink;
 					} else {
 						return false;
 					}
@@ -100,11 +100,11 @@ export const initHooks = async (): Promise<void> => {
 				icon: '<i class="fas fa-image"></i>',
 				condition: (li) => {
 					const item = <any>game.items?.get(li.data("documentId"));
-					return item.data.img !== CONST.DEFAULT_TOKEN;
+					return item.img !== CONST.DEFAULT_TOKEN;
 				},
 				callback: (li) => {
 					const item = <any>game.items?.get(li.data("documentId"));
-					new ImagePopout(item.data.img, {
+					new ImagePopout(item.img, {
 						title: item.name,
 						shareable: true,
 						uuid: item.uuid,
@@ -135,8 +135,8 @@ export const initHooks = async (): Promise<void> => {
 				},
 				callback: async (li) => {
 					const scene = <any>game.scenes?.get(li.data("documentId"));
-					const isCurrentScene = scene.data._id == canvas.scene?.data._id;
-					await resetDoors(isCurrentScene, scene.data._id);
+					const isCurrentScene = scene.id == canvas.scene?.id;
+					await resetDoors(isCurrentScene, scene.id);
 				},
 			},
 			{
@@ -147,8 +147,8 @@ export const initHooks = async (): Promise<void> => {
 				},
 				callback: async (li) => {
 					const scene = <any>game.scenes?.get(li.data("documentId"));
-					const isCurrentScene = scene.data._id == canvas.scene?.data._id;
-					await resetFog(isCurrentScene, scene.data._id);
+					const isCurrentScene = scene.id == canvas.scene?.id;
+					await resetFog(isCurrentScene, scene.id);
 				},
 			},
 			{
@@ -219,20 +219,20 @@ async function newChatCard() {
 		isHealing: this.isHealing,
 		hasDamage: this.hasDamage,
 		isVersatile: this.isVersatile,
-		isSpell: this.data.type === "spell",
+		isSpell: this.type === "spell",
 		hasSave: this.hasSave,
 		hasAreaTarget: this.hasAreaTarget,
-		isTool: this.data.type === "tool",
+		isTool: this.type === "tool",
 		hasAbilityCheck: this.hasAbilityCheck,
 	};
 	const html = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/item-card.html`, templateData);
 
 	// Create the ChatMessage data object
 	const chatData = {
-		user: game.user?.data._id,
+		user: game.user?.id,
 		type: CONST.CHAT_MESSAGE_TYPES.OTHER,
 		content: html,
-		flavor: this.data.data.chatFlavor || this.name,
+		flavor: this.data.chatFlavor || this.name,
 		flags: { "core.canPopout": true },
 	};
 
@@ -244,9 +244,9 @@ async function newChatCard() {
 }
 
 async function updateChildren() {
-	let data = this.data.token.toObject();
-	let tokArr = Array.from(<any>game.scenes?.active?.data.tokens);
-	let updateArr = tokArr.filter((i: any) => i.data.actorId === this.id);
+	let data = this.token.toObject();
+	let tokArr = Array.from(<any>game.scenes?.active?.tokens);
+	let updateArr = tokArr.filter((i: any) => i.actorId === this.id);
 	let updates = updateArr.map((i: any) => Object.assign({ _id: i.id }, data));
 	new Dialog({
 		title: game.i18n.localize("sidebar-context.updateChildrenTitle"),
@@ -262,35 +262,52 @@ async function updateChildren() {
 	}).render(true);
 }
 
-async function resetDoors(isCurrentScene, id) {
-	let updates = <any[]>[];
+async function resetDoorsAndFog(isCurrentScene: boolean, id: string) {
+	await resetDoors(isCurrentScene, id);
+	await resetFog(isCurrentScene, id);
+}
+
+async function resetDoors(isCurrentScene, id: string | null = null) {
+	const updates = <any[]>[];
 	if (isCurrentScene) {
-		canvas.walls?.doors
-			.filter((item) => item.data.ds === 1)
-			.forEach((item) => updates.push({ _id: item.id, ds: 0 }));
+		const wallsToUpdate =
+			//@ts-ignore
+			<Wall[]>canvas.walls?.doors.filter((wall) => wall.document.ds === 1);
+		for (let i = 0; i < <number>wallsToUpdate.length; i++) {
+			const doorControl = <Wall>wallsToUpdate[i];
+			updates.push({ _id: doorControl.id, ds: 0 });
+		}
 		await canvas.scene?.updateEmbeddedDocuments("Wall", updates);
 	} else {
 		if (id) {
-			let scene = <any>game.scenes?.get(id);
-			scene.data.walls.filter((item) => item.data.ds === 1).forEach((x) => updates.push({ _id: x.id, ds: 0 }));
+			const scene = <Scene>game.scenes?.get(id);
+			const scenesToUpdate =
+				//@ts-ignore
+				<Scene[]>scene.data.walls.filter((wall) => wall.document.ds === 1);
+			for (let i = 0; i < <number>scenesToUpdate.length; i++) {
+				const sceneToUpdate = <Scene>scenesToUpdate[i];
+				updates.push({ _id: sceneToUpdate.id, ds: 0 });
+			}
 			await scene.updateEmbeddedDocuments("Wall", updates);
 		}
 	}
 	ui.notifications?.info(`Doors have been shut.`);
 }
 
-async function resetFog(isCurrentScene, id = null) {
+async function resetFog(isCurrentScene, id: string | null = null) {
 	if (isCurrentScene) {
-		canvas.sight?.resetFog();
+		// canvas.sight?.resetFog();
+		//@ts-ignore
+		canvas.fog.reset();
 	} else {
 		if (id) {
-			await SocketInterface.dispatch("modifyDocument", <any>{
+			await SocketInterface.dispatch("modifyDocument", {
 				type: "FogExploration",
 				action: "delete",
 				data: { scene: id },
 				options: { reset: true },
-				//parentId: "",
-				//parentType: ""
+				parentId: "",
+				parentType: "",
 			});
 			ui.notifications?.info(`Fog of War exploration progress was reset.`);
 		}
@@ -306,14 +323,14 @@ function setNavigationForAllScenes(folder, navOn) {
 	const folderObject = <any>game.folders?.get(folder) || game.folders?.getName(folder);
 
 	const updates = game.scenes
-		?.filter((scene) => scene.data.folder === folderObject.id)
+		?.filter((scene) => scene.folder === folderObject.id)
 		.map((scene) => ({ _id: scene.id, navigation: navOn }));
 
 	return Scene.updateDocuments(updates);
 }
 
 async function rolltableRequesterMakeRoll(table) {
-	const formula = table.formula ?? table.data.formula;
+	const formula = table.formula ?? table.formula;
 	const pRoll = new Roll(formula);
 	const die = await pRoll.roll({ async: true });
 	await pRoll.toMessage({}, <any>{
@@ -329,7 +346,7 @@ async function rolltableRequesterMakeRoll(table) {
 		thumbnail: table.thumbnail,
 		total: die.total,
 		user,
-		content: results[0].text ?? results[0].data.text,
+		content: results[0].text,
 	});
 	const drawChatData = {
 		content: myHtml,
