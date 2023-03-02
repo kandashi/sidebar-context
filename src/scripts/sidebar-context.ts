@@ -1,4 +1,5 @@
 import CONSTANTS from "./constants";
+import { info, log, warn } from "./lib/lib";
 
 // const CONSTANTS.MODULE_NAME = 'sidebar-context';
 // const TEMPLATE_PATH = `/modules/${CONSTANTS.MODULE_NAME}/templates`;
@@ -6,8 +7,8 @@ import CONSTANTS from "./constants";
 
 export const initHooks = async (): Promise<void> => {
 	Hooks.on("getRollTableDirectoryEntryContext", (html, options) => {
-		options.push({
-			name: "TABLE.Roll",
+		options.unshift({
+			name: `${CONSTANTS.MODULE_NAME}.makeRoll`,
 			icon: `<i class="fas fa-dice-d20"></i>`,
 			condition: (li) => {
 				const table = <any>game.tables?.get(li.data("documentId"));
@@ -67,11 +68,7 @@ export const initHooks = async (): Promise<void> => {
 				},
 				callback: (li) => {
 					const actor = <any>game.actors?.get(li.data("documentId"));
-					// if (game.version >= 10) {
 					new CONFIG.Token.prototypeSheetClass(actor.prototypeToken).render(true);
-					// } else {
-					//   new CONFIG.Token.prototypeSheetClass(actor).render(true);
-					// }
 				},
 			},
 			{
@@ -80,7 +77,7 @@ export const initHooks = async (): Promise<void> => {
 				condition: (li) => {
 					const actor = <any>game.actors?.get(li.data("documentId"));
 					if (game.user?.isGM || (actor.isOwner && game.user?.can("TOKEN_CONFIGURE"))) {
-						return !actor.token.actorLink;
+						return !actor.prototypeToken.actorLink;
 					} else {
 						return false;
 					}
@@ -195,7 +192,7 @@ export const initHooks = async (): Promise<void> => {
 
 Hooks.once("ready", async function () {
 	$(document).on("click.sidebar-context-rolltable-requester", ".rt-requester", function () {
-		console.log("RR: Handling button click");
+		log("RR: Handling button click");
 		const c = $(this);
 		const tid = c.data("tableid");
 		makeRollById(tid);
@@ -213,7 +210,7 @@ Hooks.once("socketlib.ready", () => {
 async function newChatCard() {
 	const templateData = {
 		item: this.data,
-		data: this.getChatData(),
+		data: await this.getChatData(),
 		labels: this.labels,
 		hasAttack: this.hasAttack,
 		isHealing: this.isHealing,
@@ -244,7 +241,7 @@ async function newChatCard() {
 }
 
 async function updateChildren() {
-	let data = this.token.toObject();
+	let data = this.prototypeToken.toObject();
 	let tokArr = Array.from(<any>game.scenes?.active?.tokens);
 	let updateArr = tokArr.filter((i: any) => i.actorId === this.id);
 	let updates = updateArr.map((i: any) => Object.assign({ _id: i.id }, data));
@@ -272,7 +269,7 @@ async function resetDoors(isCurrentScene, id: string | null = null) {
 	if (isCurrentScene) {
 		const wallsToUpdate =
 			//@ts-ignore
-			<Wall[]>canvas.walls?.doors.filter((wall) => wall.document.ds === 1);
+			<Wall[]>canvas.walls?.doors.filter((wall) => wall.ds === 1);
 		for (let i = 0; i < <number>wallsToUpdate.length; i++) {
 			const doorControl = <Wall>wallsToUpdate[i];
 			updates.push({ _id: doorControl.id, ds: 0 });
@@ -283,7 +280,7 @@ async function resetDoors(isCurrentScene, id: string | null = null) {
 			const scene = <Scene>game.scenes?.get(id);
 			const scenesToUpdate =
 				//@ts-ignore
-				<Scene[]>scene.data.walls.filter((wall) => wall.document.ds === 1);
+				<Scene[]>scene.walls.filter((wall) => wall.ds === 1);
 			for (let i = 0; i < <number>scenesToUpdate.length; i++) {
 				const sceneToUpdate = <Scene>scenesToUpdate[i];
 				updates.push({ _id: sceneToUpdate.id, ds: 0 });
@@ -291,7 +288,7 @@ async function resetDoors(isCurrentScene, id: string | null = null) {
 			await scene.updateEmbeddedDocuments("Wall", updates);
 		}
 	}
-	ui.notifications?.info(`Doors have been shut.`);
+	info(`Doors have been shut.`, true);
 }
 
 async function resetFog(isCurrentScene, id: string | null = null) {
@@ -309,7 +306,7 @@ async function resetFog(isCurrentScene, id: string | null = null) {
 				parentId: "",
 				parentType: "",
 			});
-			ui.notifications?.info(`Fog of War exploration progress was reset.`);
+			info(`Fog of War exploration progress was reset.`, true);
 		}
 	}
 }
@@ -321,9 +318,12 @@ async function resetFog(isCurrentScene, id: string | null = null) {
  */
 function setNavigationForAllScenes(folder, navOn) {
 	const folderObject = <any>game.folders?.get(folder) || game.folders?.getName(folder);
-
+	if (!folderObject) {
+		warn(`Folder not exists`, true);
+		return;
+	}
 	const updates = game.scenes
-		?.filter((scene) => scene.folder === folderObject.id)
+		?.filter((scene) => scene.folder?.id === folderObject.id)
 		.map((scene) => ({ _id: scene.id, navigation: navOn }));
 
 	return Scene.updateDocuments(updates);

@@ -12,8 +12,18 @@
 	"sidebar-context.requestPrompt": "Can someone roll a result from this random table?",
 	"sidebar-context.requestButton": "Let's Get Random!",
 	"sidebar-context.playerThanks": "Thanks {PLAYER}",
-	"sidebar-context.menuMakeRoll": "Make Roll",
+	"sidebar-context.makeRoll": "Make Roll",
+	"sidebar-context.menuMakeRoll": "Make Roll and show only to GM",
 	"sidebar-context.menuRequestRoll": "Request Named Roll",
 	"sidebar-context.menuRequestBlindRoll": "Request Blinded Roll",
-	"sidebar-context.menuRequestDescRoll": "Request Descriptive Roll"
+	"sidebar-context.menuRequestDescRoll": "Request Descriptive Roll",
+	"sidebar-context.RequiredMaterials": "Required Materials",
+	"sidebar-context.Attack": "Attack",
+	"sidebar-context.Healing": "Healing",
+	"sidebar-context.Damage": "Damage",
+	"sidebar-context.Versatile": "Versatile",
+	"sidebar-context.SavingThrow": "Saving Throw",
+	"sidebar-context.OtherFormula": "Other Formula",
+	"sidebar-context.PlaceTemplate": "Place Measured Template",
+	"sidebar-context.Use": "Use"
 }

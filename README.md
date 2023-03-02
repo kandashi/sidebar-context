@@ -14,7 +14,7 @@ Adds a few right click options for various documents:
 
 ### Roll Tables
 
-- Adds a "Roll" button
+- Roll: Performs the roll in public and displays the results to all.
 - Make Roll: Performs the roll in public and displays the results to GM only.
 - Request Named Roll: Displays a chat card with button asking a player to click it to roll on a the table which is named. When they click it, the roll happens just as with the 'Make Roll' option.
 - Request Blind Roll: Displays the same chat card prompt, but without the name of the table.
@@ -32,7 +32,7 @@ Adds a few right click options for various documents:
 ### Scene
 
 - Adds a menu to the context dropdown for the Scene Directory menus to shut all doors in the selected scene to prepare it for a fresh visit from characters. The Doors that are currently locked remain locked, and are not closed.
-- Adds a menu to the context dropdown for the Scene Directory menus to delete fog in the selected scene to prepare it for a fresh visit from characters. I find it useful after QAing a new map for holes in walls/doors and checking lighting, etc.
+- Adds a menu to the context dropdown for the Scene Directory menus to delete fog in the selected scene to prepare it for a fresh visit from characters. I find it useful after finishing a new map for holes in walls/doors and checking lighting, etc.
 - Add on the folder scene context options the two options for hide all the scene on the navigation bar or show all.
 - Add a preload scene button
 
