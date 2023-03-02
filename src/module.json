@@ -59,7 +59,7 @@
 	"packs": [],
 	"systems": [],
 	"scripts": [],
-	"esmodules": ["/scripts/main.js"],
+	"esmodules": ["main.js"],
 	"styles": ["/styles/sidebar-context.css"],
 	"compatibility": {
 		"minimum": 10,
