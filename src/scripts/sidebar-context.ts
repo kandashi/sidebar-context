@@ -6,6 +6,19 @@ import { info, log, warn } from "./lib/lib";
 // const WHISPER_FN = 'cheekyWhisper';
 
 export const initHooks = async (): Promise<void> => {
+    Hooks.on("getSceneDirectoryFolderContext", (html, options) => {
+		options.unshift({
+			name: `${CONSTANTS.MODULE_NAME}.makeRollFolder`,
+			icon: `<i class="fas fa-dice-d20"></i>`,
+			condition: (header) => {
+				return game.user?.isGM;
+			},
+			callback: (header) => {
+				const folderId = header.parent().data("folderId");
+				rollTableFromFolder(folderId);
+			},
+		});
+	});
 	Hooks.on("getRollTableDirectoryEntryContext", (html, options) => {
 		options.unshift({
 			name: `${CONSTANTS.MODULE_NAME}.makeRoll`,
@@ -15,8 +28,10 @@ export const initHooks = async (): Promise<void> => {
 				return table.img !== CONST.DEFAULT_TOKEN;
 			},
 			callback: (li) => {
-				const table = <any>game.tables?.get(li.data("documentId"));
-				table.draw();
+				//const table = <any>game.tables?.get(li.data("documentId"));
+				// table.draw();
+                const tableId = li.data("documentId");
+                rollTableFromSidebar(tableId);
 			},
 		});
 		// const menuId = 'rolltable-requester';
@@ -187,6 +202,23 @@ export const initHooks = async (): Promise<void> => {
 				},
 			}
 		);
+	});
+
+	Hooks.on("getCompendiumDirectoryEntryContext", (html, options) => {
+		options.unshift({
+			name: `${CONSTANTS.MODULE_NAME}.makeRollFolder`,
+			icon: `<i class="fas fa-dice-d20"></i>`,
+			condition: (header) => {
+				const data =  <any>{};
+				return data.collection.metadata.type !== 'RollTable';
+			},
+			callback: (header) => {
+				const data = <any>{};
+				const tableId = header.data("documentId");
+				const packRef = `${data.collection.metadata.packageName}.${data.collection.metadata.name}`
+				rollTableFromCompendium(tableId,packRef);
+			},
+		});
 	});
 };
 
@@ -415,4 +447,56 @@ function cheekyWhisper(msg) {
 		whisper: ChatMessage.getWhisperRecipients("GM"),
 	};
 	ChatMessage.create(chatMsg);
+}
+
+function rollTableFromSidebar(tableId) {
+    // const tableId = event.currentTarget.parentElement.dataset["documentId"];
+    const table = game.tables.get(tableId);
+    table.draw();
+}
+
+function rollTableFromCompendium(tableId, pack) {
+    // let fid = event.target.parentElement.parentElement.parentElement.dataset.folderId;
+	// const tableId = event.currentTarget.parentElement.dataset["documentId"];
+    game.packs.get(pack).getDocument(tableId).then(table => {
+        table.draw();
+    })
+}
+
+function rollTableFromFolder(folderId) {
+    // event.preventDefault();
+    // event.stopPropagation();
+    // let fid = event.target.parentElement.parentElement.parentElement.dataset.folderId;
+    const folderObject = <any>game.folders?.get(folderId) || game.folders?.getName(folderId);
+	if (!folderObject) {
+		warn(`Folder not exists`, true);
+		return;
+	}
+    let tables = game.tables?.contents.filter(t => t.folder?.id === folderId);
+    if (tables.length > 5) {
+        let dialog = new Dialog({
+            title: 'Warning',
+            content: `<div>${game.i18n.localize("sidebar-context.rollTableFromSidebarWarning")}</div>`,
+            buttons: {
+                confirm: {
+                    label: 'OK',
+                    callback: () => {
+                        tables.forEach(t => {
+                            t.draw();
+                        });
+                    }
+                },
+                cancel: {
+                    label: game.i18n.localize("sidebar-context.rollTableFromSidebarCancel"),
+                    callback: () => {}
+                },
+            },
+            default: 'cancel'
+        });
+        dialog.render(true);
+    } else {
+        tables.forEach(t => {
+            t.draw();
+        });
+    }
 }

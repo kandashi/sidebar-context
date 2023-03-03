@@ -1,8 +1,8 @@
 # Sidebar Context
 
-![Latest Release Download Count](https://img.shields.io/github/downloads/p4535992/foundryvtt-sidebar-context/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge) 
+![Latest Release Download Count](https://img.shields.io/github/downloads/p4535992/foundryvtt-sidebar-context/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge)
 
-[![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fsidebar-context&colorB=006400&style=for-the-badge)](https://forge-vtt.com/bazaar#package=sidebar-context) 
+[![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fsidebar-context&colorB=006400&style=for-the-badge)](https://forge-vtt.com/bazaar#package=sidebar-context)
 
 ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2Fp4535992%2Ffoundryvtt-sidebar-context%2Fmaster%2Fmodule.json&label=Foundry%20Version&query=$.compatibleCoreVersion&colorB=orange&style=for-the-badge)
 
@@ -14,6 +14,12 @@ Adds a few right click options for various documents:
 
 ### Roll Tables
 
+**On Folder**
+
+- Roll: Do a roll for every table on the folder
+
+**On Document**
+
 - Roll: Performs the roll in public and displays the results to all.
 - Make Roll: Performs the roll in public and displays the results to GM only.
 - Request Named Roll: Displays a chat card with button asking a player to click it to roll on a the table which is named. When they click it, the roll happens just as with the 'Make Roll' option.
@@ -22,19 +28,34 @@ Adds a few right click options for various documents:
 
 ### Actors
 
+**On Document**
+
 - Adds a edit "Prototype Token" button
 - Adds an "Update Child Tokens" button, updates all tokens from the parent actor to the current Prototype Token data
 
 ### Items
 
+**On Document**
+
 - Adds a "Display to chat" button, which sends a chat message in the same way rolling the item from the actor
 
 ### Scene
 
+**On Folder**
+
+- Add on the folder scene context options the two options for hide all the scene on the navigation bar or show all.
+
+**On Document**
+
 - Adds a menu to the context dropdown for the Scene Directory menus to shut all doors in the selected scene to prepare it for a fresh visit from characters. The Doors that are currently locked remain locked, and are not closed.
 - Adds a menu to the context dropdown for the Scene Directory menus to delete fog in the selected scene to prepare it for a fresh visit from characters. I find it useful after finishing a new map for holes in walls/doors and checking lighting, etc.
-- Add on the folder scene context options the two options for hide all the scene on the navigation bar or show all.
 - Add a preload scene button
+
+### Compendium
+
+**On Document**
+
+- Roll table form compendium
 
 ## Installation
 
