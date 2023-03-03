@@ -22,7 +22,7 @@ Adds a few right click options for various documents:
 
 ### Actors
 
-- Adds a "Prototype Token" button
+- Adds a edit "Prototype Token" button
 - Adds an "Update Child Tokens" button, updates all tokens from the parent actor to the current Prototype Token data
 
 ### Items
