@@ -12,7 +12,7 @@
 	"sidebar-context.requestPrompt": "Can someone roll a result from this random table?",
 	"sidebar-context.requestButton": "Let's Get Random!",
 	"sidebar-context.playerThanks": "Thanks {PLAYER}",
-    "sidebar-context.makeRollFolder": "Make Roll the Folder",
+	"sidebar-context.makeRollFolder": "Make Roll the Folder",
 	"sidebar-context.makeRoll": "Make Roll",
 	"sidebar-context.menuMakeRoll": "Make Roll and show only to GM",
 	"sidebar-context.menuRequestRoll": "Request Named Roll",
@@ -27,6 +27,6 @@
 	"sidebar-context.OtherFormula": "Other Formula",
 	"sidebar-context.PlaceTemplate": "Place Measured Template",
 	"sidebar-context.Use": "Use",
-    "sidebar-context.rollTableFromSidebarWarning": "There are more than 5 tables in this folder. Proceed?",
-    "sidebar-context.rollTableFromSidebarCancel": "Cancel"
+	"sidebar-context.rollTableFromSidebarWarning": "There are more than 5 tables in this folder. Proceed?",
+	"sidebar-context.rollTableFromSidebarCancel": "Cancel"
 }

@@ -6,7 +6,7 @@ import { info, log, warn } from "./lib/lib";
 // const WHISPER_FN = 'cheekyWhisper';
 
 export const initHooks = async (): Promise<void> => {
-    Hooks.on("getSceneDirectoryFolderContext", (html, options) => {
+	Hooks.on("getRollTableDirectoryFolderContext", (html, options) => {
 		options.unshift({
 			name: `${CONSTANTS.MODULE_NAME}.makeRollFolder`,
 			icon: `<i class="fas fa-dice-d20"></i>`,
@@ -16,7 +16,7 @@ export const initHooks = async (): Promise<void> => {
 			callback: (header) => {
 				const folderId = header.parent().data("folderId");
 				rollTableFromFolder(folderId);
-			},
+			}
 		});
 	});
 	Hooks.on("getRollTableDirectoryEntryContext", (html, options) => {
@@ -30,9 +30,9 @@ export const initHooks = async (): Promise<void> => {
 			callback: (li) => {
 				//const table = <any>game.tables?.get(li.data("documentId"));
 				// table.draw();
-                const tableId = li.data("documentId");
-                rollTableFromSidebar(tableId);
-			},
+				const tableId = li.data("documentId");
+				rollTableFromSidebar(tableId);
+			}
 		});
 		// const menuId = 'rolltable-requester';
 		// if (entries.some(e => e.menuId === menuId)) {
@@ -44,25 +44,25 @@ export const initHooks = async (): Promise<void> => {
 				// menuId,
 				name: game.i18n.localize("sidebar-context.menuMakeRoll"),
 				icon: '<i class="fas fa-dice-d20"></i>',
-				callback: (target) => makeRollById(target.data("document-id")),
+				callback: (target) => makeRollById(target.data("document-id"))
 			},
 			{
 				name: game.i18n.localize("sidebar-context.menuRequestRoll"),
 				icon: '<i class="fas fa-question-circle"></i>',
 				condition: game.user?.isGM,
-				callback: (target) => requestRollById(target.data("document-id")),
+				callback: (target) => requestRollById(target.data("document-id"))
 			},
 			{
 				name: game.i18n.localize("sidebar-context.menuRequestBlindRoll"),
 				icon: '<i class="fas fa-eye-slash"></i>',
 				condition: game.user?.isGM,
-				callback: (target) => requestRollById(target.data("document-id"), { blind: true }),
+				callback: (target) => requestRollById(target.data("document-id"), { blind: true })
 			},
 			{
 				name: game.i18n.localize("sidebar-context.menuRequestDescRoll"),
 				icon: '<i class="fas fa-book-sparkles"></i>',
 				condition: game.user?.isGM,
-				callback: (target) => requestRollById(target.data("document-id"), { description: true }),
+				callback: (target) => requestRollById(target.data("document-id"), { description: true })
 			}
 		);
 		// }
@@ -84,7 +84,7 @@ export const initHooks = async (): Promise<void> => {
 				callback: (li) => {
 					const actor = <any>game.actors?.get(li.data("documentId"));
 					new CONFIG.Token.prototypeSheetClass(actor.prototypeToken).render(true);
-				},
+				}
 			},
 			{
 				name: "sidebar-context.updateChildren",
@@ -100,7 +100,7 @@ export const initHooks = async (): Promise<void> => {
 				callback: (li) => {
 					const actor = game.actors?.get(li.data("documentId"));
 					updateChildren.call(actor);
-				},
+				}
 			}
 		);
 	});
@@ -119,9 +119,9 @@ export const initHooks = async (): Promise<void> => {
 					new ImagePopout(item.img, {
 						title: item.name,
 						shareable: true,
-						uuid: item.uuid,
+						uuid: item.uuid
 					}).render(true);
-				},
+				}
 			},
 			{
 				name: "sidebar-context.displayChat",
@@ -132,7 +132,7 @@ export const initHooks = async (): Promise<void> => {
 				callback: (li) => {
 					const item = game.items?.get(li.data("documentId"));
 					newChatCard.call(item);
-				},
+				}
 			}
 		);
 	});
@@ -149,7 +149,7 @@ export const initHooks = async (): Promise<void> => {
 					const scene = <any>game.scenes?.get(li.data("documentId"));
 					const isCurrentScene = scene.id == canvas.scene?.id;
 					await resetDoors(isCurrentScene, scene.id);
-				},
+				}
 			},
 			{
 				name: "sidebar-context.resetFog",
@@ -161,7 +161,7 @@ export const initHooks = async (): Promise<void> => {
 					const scene = <any>game.scenes?.get(li.data("documentId"));
 					const isCurrentScene = scene.id == canvas.scene?.id;
 					await resetFog(isCurrentScene, scene.id);
-				},
+				}
 			},
 			{
 				name: "SCENES.Preload",
@@ -172,7 +172,7 @@ export const initHooks = async (): Promise<void> => {
 				callback: (li) => {
 					const scene = <any>game.scenes?.get(li.data("documentId"));
 					game.scenes?.preload(scene.id, true);
-				},
+				}
 			}
 		);
 	});
@@ -188,7 +188,7 @@ export const initHooks = async (): Promise<void> => {
 				callback: (header) => {
 					const folderId = header.parent().data("folderId");
 					setNavigationForAllScenes(folderId, true);
-				},
+				}
 			},
 			{
 				name: "sidebar-context.hideNavAll",
@@ -199,32 +199,32 @@ export const initHooks = async (): Promise<void> => {
 				callback: (header) => {
 					const folderId = header.parent().data("folderId");
 					setNavigationForAllScenes(folderId, false);
-				},
+				}
 			}
 		);
 	});
 
-	Hooks.on("getCompendiumDirectoryEntryContext", (html, options) => {
-		options.unshift({
-			name: `${CONSTANTS.MODULE_NAME}.makeRollFolder`,
-			icon: `<i class="fas fa-dice-d20"></i>`,
-			condition: (header) => {
-				const data =  <any>{};
-				return data.collection.metadata.type !== 'RollTable';
-			},
-			callback: (header) => {
-				const data = <any>{};
-				const tableId = header.data("documentId");
-				const packRef = `${data.collection.metadata.packageName}.${data.collection.metadata.name}`
-				rollTableFromCompendium(tableId,packRef);
-			},
-		});
-	});
+	// Hooks.on("getCompendiumDirectoryEntryContext", (html, options) => {
+	// 	options.unshift({
+	// 		name: `${CONSTANTS.MODULE_NAME}.makeRollFolder`,
+	// 		icon: `<i class="fas fa-dice-d20"></i>`,
+	// 		condition: (header) => {
+	// 			const collection = <any>game.packs.get(header.data("pack"));
+	// 			return collection.metadata.type === "RollTable";
+	// 		},
+	// 		callback: (header) => {
+	// 			const collection = <any>game.packs.get(header.data("pack"));
+	// 			const tableId = header.data("documentId");
+	// 			const packRef = `${collection.metadata.packageName}.${collection.metadata.name}`;
+	// 			rollTableFromCompendium(tableId, packRef);
+	// 		}
+	// 	});
+	// });
 };
 
 Hooks.once("ready", async function () {
 	$(document).on("click.sidebar-context-rolltable-requester", ".rt-requester", function () {
-		log("RR: Handling button click");
+		log("Handling button click");
 		const c = $(this);
 		const tid = c.data("tableid");
 		makeRollById(tid);
@@ -252,7 +252,7 @@ async function newChatCard() {
 		hasSave: this.hasSave,
 		hasAreaTarget: this.hasAreaTarget,
 		isTool: this.type === "tool",
-		hasAbilityCheck: this.hasAbilityCheck,
+		hasAbilityCheck: this.hasAbilityCheck
 	};
 	const html = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/item-card.html`, templateData);
 
@@ -262,7 +262,7 @@ async function newChatCard() {
 		type: CONST.CHAT_MESSAGE_TYPES.OTHER,
 		content: html,
 		flavor: this.data.chatFlavor || this.name,
-		flags: { "core.canPopout": true },
+		flags: { "core.canPopout": true }
 	};
 
 	// Apply the roll mode to adjust message visibility
@@ -285,9 +285,9 @@ async function updateChildren() {
 				label: game.i18n.localize("Yes"),
 				callback: () => {
 					game.scenes?.active?.updateEmbeddedDocuments("Token", updates);
-				},
-			},
-		},
+				}
+			}
+		}
 	}).render(true);
 }
 
@@ -336,7 +336,7 @@ async function resetFog(isCurrentScene, id: string | null = null) {
 				data: { scene: id },
 				options: { reset: true },
 				parentId: "",
-				parentType: "",
+				parentType: ""
 			});
 			info(`Fog of War exploration progress was reset.`, true);
 		}
@@ -367,7 +367,7 @@ async function rolltableRequesterMakeRoll(table) {
 	const die = await pRoll.roll({ async: true });
 	await pRoll.toMessage({}, <any>{
 		rollMode: CONFIG.Dice.rollModes.publicroll,
-		create: true,
+		create: true
 	});
 
 	const results = table.getResultsForRoll(die.total);
@@ -378,10 +378,10 @@ async function rolltableRequesterMakeRoll(table) {
 		thumbnail: table.thumbnail,
 		total: die.total,
 		user,
-		content: results[0].text,
+		content: results[0].text
 	});
 	const drawChatData = {
-		content: myHtml,
+		content: myHtml
 	};
 	await sideBarContextSocket.executeAsGM(CONSTANTS.WHISPER_FN, drawChatData);
 }
@@ -402,7 +402,7 @@ async function requestRollById(tid, { blind, description } = <any>{ blind: false
 		description: "",
 		thumbnail: "icons/svg/d20-grey.svg",
 		tid,
-		system: game.system.id,
+		system: game.system.id
 	};
 	let table;
 	if (!blind || description) {
@@ -430,7 +430,7 @@ async function requestRollById(tid, { blind, description } = <any>{ blind: false
 	const myHtml = await renderTemplate(`${CONSTANTS.TEMPLATE_PATH}/request-card.html`, tmplData);
 	const chatData = {
 		user: game.user?.id,
-		content: myHtml,
+		content: myHtml
 	};
 	ChatMessage.create(chatData, {});
 	return table;
@@ -444,59 +444,62 @@ async function requestRollByName(tableName, opts = { blind: false, description: 
 function cheekyWhisper(msg) {
 	const chatMsg = {
 		...msg,
-		whisper: ChatMessage.getWhisperRecipients("GM"),
+		whisper: ChatMessage.getWhisperRecipients("GM")
 	};
 	ChatMessage.create(chatMsg);
 }
 
 function rollTableFromSidebar(tableId) {
-    // const tableId = event.currentTarget.parentElement.dataset["documentId"];
-    const table = game.tables.get(tableId);
-    table.draw();
+	// const tableId = event.currentTarget.parentElement.dataset["documentId"];
+	const table = <any>game.tables?.get(tableId);
+	table.draw();
 }
 
 function rollTableFromCompendium(tableId, pack) {
-    // let fid = event.target.parentElement.parentElement.parentElement.dataset.folderId;
+	// let fid = event.target.parentElement.parentElement.parentElement.dataset.folderId;
 	// const tableId = event.currentTarget.parentElement.dataset["documentId"];
-    game.packs.get(pack).getDocument(tableId).then(table => {
-        table.draw();
-    })
+	game.packs
+		.get(pack)
+		?.getDocument(tableId)
+		?.then((table: any) => {
+			table.draw();
+		});
 }
 
 function rollTableFromFolder(folderId) {
-    // event.preventDefault();
-    // event.stopPropagation();
-    // let fid = event.target.parentElement.parentElement.parentElement.dataset.folderId;
-    const folderObject = <any>game.folders?.get(folderId) || game.folders?.getName(folderId);
+	// event.preventDefault();
+	// event.stopPropagation();
+	// let fid = event.target.parentElement.parentElement.parentElement.dataset.folderId;
+	const folderObject = <any>game.folders?.get(folderId) || game.folders?.getName(folderId);
 	if (!folderObject) {
 		warn(`Folder not exists`, true);
 		return;
 	}
-    let tables = game.tables?.contents.filter(t => t.folder?.id === folderId);
-    if (tables.length > 5) {
-        let dialog = new Dialog({
-            title: 'Warning',
-            content: `<div>${game.i18n.localize("sidebar-context.rollTableFromSidebarWarning")}</div>`,
-            buttons: {
-                confirm: {
-                    label: 'OK',
-                    callback: () => {
-                        tables.forEach(t => {
-                            t.draw();
-                        });
-                    }
-                },
-                cancel: {
-                    label: game.i18n.localize("sidebar-context.rollTableFromSidebarCancel"),
-                    callback: () => {}
-                },
-            },
-            default: 'cancel'
-        });
-        dialog.render(true);
-    } else {
-        tables.forEach(t => {
-            t.draw();
-        });
-    }
+	let tables = <any[]>game.tables?.contents.filter((t) => t.folder?.id === folderId);
+	if (tables.length > 5) {
+		let dialog = new Dialog({
+			title: "Warning",
+			content: `<div>${game.i18n.localize("sidebar-context.rollTableFromSidebarWarning")}</div>`,
+			buttons: {
+				confirm: {
+					label: "OK",
+					callback: () => {
+						tables.forEach((t) => {
+							t.draw();
+						});
+					}
+				},
+				cancel: {
+					label: game.i18n.localize("sidebar-context.rollTableFromSidebarCancel"),
+					callback: () => {}
+				}
+			},
+			default: "cancel"
+		});
+		dialog.render(true);
+	} else {
+		tables.forEach((t) => {
+			t.draw();
+		});
+	}
 }

@@ -33,7 +33,6 @@
     ],
     "types": [
         "jquery",
-        "jest",
         "node",
         "handlebars",
         "@league-of-foundry-developers/foundry-vtt-types/index-lenient"
@@ -108,7 +107,9 @@
     "sourceMap": true,
     "baseUrl": ".",
     "allowUnusedLabels": false,
-    "removeComments": false
+    "removeComments": false,
+
+
   },
   "ts-node": {
     "files": true
