@@ -57,12 +57,6 @@ Adds a few right click options for various documents:
 - Adds a menu to the context dropdown for the Scene Directory menus to delete fog in the selected scene to prepare it for a fresh visit from characters. I find it useful after finishing a new map for holes in walls/doors and checking lighting, etc.
 - Add a preload scene button
 
-### Compendium
-
-**On Document**
-
-- Roll table form compendium
-
 ## Installation
 
 It's always easiest to install modules from the in game add-on browser.
